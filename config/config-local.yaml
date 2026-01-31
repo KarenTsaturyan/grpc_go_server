@@ -1,0 +1,6 @@
+env: "local" # dev, staging, prod
+storage_path: "./storage/auth.db"
+token_ttl: 1h
+grpc:
+  port: 50051
+  timeout: 10h #prod->5-7s
