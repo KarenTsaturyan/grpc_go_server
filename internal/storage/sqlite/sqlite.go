@@ -130,3 +130,30 @@ func (s *Storage) IsAdmin(ctx context.Context, userID int64) (bool, error) {
 
 	return isAdmin, nil
 }
+
+// SaveApp saves new app to db.
+func (s *Storage) SaveApp(ctx context.Context, userId int64, name string, secret string) (int64, error) {
+	const op = "storage.sqlite.SaveApp"
+
+	stmt, err := s.db.Prepare("INSERT INTO apps(id ,name, secret) VALUES(?, ?, ?)")
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	res, err := stmt.ExecContext(ctx, userId, name, secret)
+	if err != nil {
+		var sqliteErr sqlite3.Error
+		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
+			return 0, fmt.Errorf("%s: %w", op, storage.ErrAppExists)
+		}
+
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return id, nil
+}

@@ -18,7 +18,12 @@ type Auth struct {
 	usrSaver    UserSaver
 	usrProvider UserProvider
 	appProvider AppProvider
+	appSaver    AppSaver
 	tokenTTL    time.Duration
+}
+
+type AppSaver interface {
+	SaveApp(ctx context.Context, userId int64, name string, secret string) (int64, error)
 }
 
 var (
@@ -50,6 +55,7 @@ func New(
 	userSaver UserSaver,
 	userProvider UserProvider,
 	appProvider AppProvider,
+	appSaver AppSaver,
 	tokenTTL time.Duration,
 ) *Auth {
 	return &Auth{
@@ -57,6 +63,7 @@ func New(
 		usrProvider: userProvider,
 		log:         log,
 		appProvider: appProvider,
+		appSaver:    appSaver,
 		tokenTTL:    tokenTTL,
 	}
 }
@@ -145,6 +152,8 @@ func (a *Auth) RegisterNewUser(
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
+	// previously SaveApp was not present in the service, but Ensure appSaver exists and used in CreateApp
+
 	log.Info("user registered")
 
 	return id, nil
@@ -177,4 +186,28 @@ func (a *Auth) IsAdmin(
 	log.Info("checked if user is admin", slog.Bool("is_admin", isAdmin))
 
 	return isAdmin, nil
+}
+
+// CreateApp creates a new application with provided name and secret.
+func (a *Auth) CreateApp(ctx context.Context, userId int64, name string, secret string) (int64, string, error) {
+	const op = "Auth.CreateApp"
+
+	log := a.log.With(
+		slog.String("op", op),
+	)
+
+	log.Info("creating app")
+
+	id, err := a.appSaver.SaveApp(ctx, userId, name, secret)
+	if err != nil {
+		if errors.Is(err, storage.ErrAppExists) {
+			return 0, "", fmt.Errorf("%s: %w", op, storage.ErrAppExists)
+		}
+
+		return 0, "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	log.Info("app created", slog.Int64("app_id", id))
+
+	return id, name, nil
 }

@@ -10,6 +10,8 @@ require (
 	google.golang.org/grpc v1.78.0
 )
 
+require github.com/KarenTsaturyan/proto_go v0.0.3
+
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/mattn/go-sqlite3 v1.14.33
@@ -18,7 +20,6 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
-	github.com/KarenTsaturyan/proto_go v0.0.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/joho/godotenv v1.5.1 // indirect
 	golang.org/x/crypto v0.47.0

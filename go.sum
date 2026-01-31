@@ -1,7 +1,7 @@
 github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
-github.com/KarenTsaturyan/proto_go v0.0.1 h1:7v8Sou8egFVypbHMq/1bRIw4vHc9BheQlbzk1xBQBBY=
-github.com/KarenTsaturyan/proto_go v0.0.1/go.mod h1:9r+gBMOcmZWcogCEDwtmoeMwb2rf0nzCgo9EmGReIEg=
+github.com/KarenTsaturyan/proto_go v0.0.3 h1:+RHP231nUihFy7ccQo6Faw1rEUtmkXg/9TkwXN3IRwY=
+github.com/KarenTsaturyan/proto_go v0.0.3/go.mod h1:9r+gBMOcmZWcogCEDwtmoeMwb2rf0nzCgo9EmGReIEg=
 github.com/brianvoe/gofakeit/v6 v6.28.0 h1:Xib46XXuQfmlLS2EXRuJpqcw8St6qSZz75OUo0tgAW4=
 github.com/brianvoe/gofakeit/v6 v6.28.0/go.mod h1:Xj58BMSnFqcn/fAQeSK+/PLtC5kSb7FJIq4JyGa8vEs=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=

@@ -1,5 +1,5 @@
 env: "local" # dev, staging, prod
-storage_path: "./storage/auth.db"
+storage_path: "./storage/auth.db" ## for deploy maybe there will be need to change the path
 token_ttl: 1h
 grpc:
   port: 50051

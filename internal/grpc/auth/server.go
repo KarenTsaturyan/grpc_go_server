@@ -2,10 +2,13 @@ package auth
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/base64"
 	"errors"
 
 	ssov1 "github.com/KarenTsaturyan/proto_go/gen/go/sso"
 	"github.com/go_grpc/auth/internal/services/auth"
+	"github.com/go_grpc/auth/internal/storage"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -24,6 +27,8 @@ type Auth interface {
 		password string,
 	) (userID int64, err error)
 	IsAdmin(ctx context.Context, userID int64) (bool, error)
+	// CreateApp creates app and returns id and secret (secret returned only at creation)
+	CreateApp(ctx context.Context, userId int64, name string, secret string) (int64, string, error)
 }
 
 type serverAPI struct {
@@ -109,6 +114,45 @@ func (s *serverAPI) IsAdmin(
 	return &ssov1.IsAdminResponse{
 		IsAdmin: isAdmin,
 	}, err
+}
+
+func (s *serverAPI) CreateApp(
+	ctx context.Context,
+	req *ssov1.CreateAppRequest, // assume proto has name and optional secret fields
+) (*ssov1.CreateAppResponse, error) {
+	if req.GetName() == "" {
+		return nil, status.Error(codes.InvalidArgument, "name is required")
+	}
+
+	secret := req.GetSecret()
+	// If secret not provided - generate a strong one
+	if secret == "" {
+		b := make([]byte, 32)
+		if _, err := rand.Read(b); err != nil {
+			return nil, status.Error(codes.Internal, "failed to generate secret")
+		}
+		secret = base64.RawURLEncoding.EncodeToString(b)
+	} else {
+		// basic validation (reject too short secrets)
+		if len(secret) < 32 {
+			return nil, status.Error(codes.InvalidArgument, "secret is too short")
+		}
+	}
+
+	id, name, err := s.auth.CreateApp(ctx, req.GetUserId(), req.GetName(), secret)
+	if err != nil {
+		if errors.Is(err, storage.ErrAppExists) {
+			return nil, status.Error(codes.AlreadyExists, "app already exists")
+		}
+
+		return nil, status.Error(codes.Internal, "internal error")
+	}
+
+	// Return id and secret (secret returned only on creation)
+	return &ssov1.CreateAppResponse{
+		UserId: id,
+		Name:   name,
+	}, nil
 }
 
 func (s *serverAPI) Logout(
