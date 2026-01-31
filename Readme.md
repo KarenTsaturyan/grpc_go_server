@@ -65,7 +65,7 @@ What this project uses from gRPC:
 Architecture diagram:
 ```mermaid
 graph LR
-  Client -->|gRPC (Register/Login)| GRPC_Server[Auth gRPC Server]
+  Client -->|"gRPC (Register/Login)"| GRPC_Server[Auth gRPC Server]
   GRPC_Server --> Handler[Auth Handler]
   Handler --> AuthService[internal/services/auth]
   AuthService --> Storage[internal/storage/sqlite]
