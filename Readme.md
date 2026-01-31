@@ -1,5 +1,7 @@
 ﻿### Proto repo -> [https://github.com/KarenTsaturyan/proto_go]
 
+ # The code isn't supposed to work as production AUTH service, it's just base implementation, to see how gRPC works
+
 # REST vs gRPC
 
 ## Overview
