@@ -47,3 +47,14 @@ Run this command after updating [sso.proto]
 ```
 protoc -I .\proto --go_out=.\gen\go --go_opt=paths=source_relative --go-grpc_out=.\gen\go --go-grpc_opt=paths=source_relative .\proto\sso\sso.proto 
 ```
+
+## Run App 
+```
+go run .\cmd\auth\main.go --config=./config/config-local.yaml
+```
+
+## Migrations
+ go run .\cmd\migrator\ --storage-path=./storage/auth.db --migrations-path=./migrations
+
+ ## TEST Migrations
+  go run ./cmd/migrator/main.go --storage-path=./storage/auth.db --migrations-path=./tests/migrations --migrations-table=migrations_test

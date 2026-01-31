@@ -25,6 +25,7 @@ var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 	ErrInvalidAppId       = errors.New("invalid App Id")
 	ErrUserExists         = errors.New("user already exists")
+	ErrUserNotFound       = errors.New("user not found")
 )
 
 type UserSaver interface {
@@ -87,12 +88,14 @@ func (a *Auth) Login(
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
+	log.Debug("comparing password hash")
 	if err := bcrypt.CompareHashAndPassword(user.PassHash, []byte(password)); err != nil {
 		a.log.Info("invalid credentials", slog.Any("err", err))
 
 		return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 	}
 
+	log.Debug("fetching app", slog.Int("app_id", appID))
 	app, err := a.appProvider.App(ctx, appID)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
